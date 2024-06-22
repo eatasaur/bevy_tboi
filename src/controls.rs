@@ -1,8 +1,8 @@
 use crate::{
     assets::ImageAssets,
     kenney_assets::KenneySpriteSheetAsset,
-    pause::Pausable,
     player::PlayerCharacterType,
+    ui::pause::Pausable,
     GameState, Player,
 };
 use bevy::prelude::*;
@@ -79,7 +79,7 @@ fn weapon_system(
     mut last_shot: Local<Option<Duration>>,
 ) {
     let space_sheet =
-        sheets.get(&images.space_sheet).unwrap();
+        sheets.get(&images.male_person_sheet).unwrap();
 
     let Ok(transform) = query.get_single() else {
         if query.iter().count() > 1 {

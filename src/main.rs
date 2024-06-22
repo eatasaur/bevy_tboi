@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use bevy_xpbd_2d::{plugins::{PhysicsDebugPlugin, PhysicsPlugins}};
-use binding_of_isaac::{assets::AssetsPlugin, controls::ControlsPlugin, movement::MovementPlugin, player::PlayerPlugin, GameState};
+use bevy_xpbd_2d::plugins::{PhysicsDebugPlugin, PhysicsPlugins};
+use binding_of_isaac::{assets::AssetsPlugin, controls::ControlsPlugin, movement::MovementPlugin, player::PlayerPlugin, settings::SettingsPlugin, ui::{choose_ship::ChoosePlayerPlugin, pause::PausePlugin, UiPlugin}, GameState};
 
 fn main() {
     App::new()
@@ -21,9 +21,13 @@ fn main() {
             PhysicsDebugPlugin::default(),
             (
                 AssetsPlugin,
+                ChoosePlayerPlugin,
                 ControlsPlugin,
                 MovementPlugin,
+                PausePlugin,
                 PlayerPlugin,
+                SettingsPlugin,
+                UiPlugin,
             )
             ))
         .init_state::<GameState>()

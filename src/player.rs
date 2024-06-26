@@ -5,6 +5,7 @@ use crate::{
     assets::ImageAssets,
     controls::MovementFactor,
     kenney_assets::KenneySpriteSheetAsset,
+    lives::{Lives, RemoveLifeEvent},
     movement::WrappingMovement,
     ui::pause::Pausable,
     Player, GameState
@@ -15,14 +16,14 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(PlayerCharacterType::Isaac)
-            .add_systems(
-                PostUpdate,
-                player_destroyed_event_handler
-                    .run_if(resource_equals(
-                        Pausable::NotPaused,
-                    ))
-                    .run_if(in_state(GameState::Playing)),
-            )
+            // .add_systems(
+            //     PostUpdate,
+            //     player_destroyed_event_handler
+            //         .run_if(resource_equals(
+            //             Pausable::NotPaused,
+            //         ))
+            //         .run_if(in_state(GameState::Playing)),
+            // )
             .add_systems(
                 PostUpdate,
                 spawn_player_after_player_destroyed
@@ -110,51 +111,52 @@ pub struct BaseCharacterSpeed {
     pub rotation_speed: f32,
 }
 
-fn player_destroyed_event_handler(
-    mut commands: Commands,
-    images: Res<ImageAssets>,
-    mut events: EventReader<PlayerDestroyed>,
-    sheets: Res<Assets<KenneySpriteSheetAsset>>,
-    mut effect: Query<(
-        &mut Transform,
-    )>,
-    mut ship_movement: ResMut<MovementFactor>,
-) {
-    let Some(space_sheet) = sheets.get(&images.male_person_sheet)
-    else {
-        warn!("player_ship_destroyed_event_handler requires meteor sprites to be loaded");
-        return;
-    };
+// fn player_destroyed_event_handler(
+//     mut commands: Commands,
+//     images: Res<ImageAssets>,
+//     mut events: EventReader<PlayerDestroyed>,
+//     sheets: Res<Assets<KenneySpriteSheetAsset>>,
+//     mut effect: Query<(
+//         &mut Transform,
+//     )>,
+//     mut ship_movement: ResMut<MovementFactor>,
+// ) {
+//     let Some(space_sheet) = sheets.get(&images.male_person_sheet)
+//     else {
+//         warn!("player_ship_destroyed_event_handler requires meteor sprites to be loaded");
+//         return;
+//     };
 
-    let Ok((
-        mut effect_transform,
-    )) = effect.get_single_mut()
-    else {
-        warn!("effect not ready yet, returning");
-        return;
-    };
+//     let Ok((
+//         mut effect_transform,
+//     )) = effect.get_single_mut()
+//     else {
+//         warn!("effect not ready yet, returning");
+//         return;
+//     };
 
-    for PlayerDestroyed {
-        destroyed_at,
-        character_type,
-    } in &mut events.read()
-    {
-        effect_transform.translation =
-            destroyed_at.translation;
+//     for PlayerDestroyed {
+//         destroyed_at,
+//         character_type,
+//     } in &mut events.read()
+//     {
+//         effect_transform.translation =
+//             destroyed_at.translation;
 
-        ship_movement.0 = Vec2::ZERO;
-    }
-}
+//         ship_movement.0 = Vec2::ZERO;
+//     }
+// }
 
 fn spawn_player_after_player_destroyed(
     mut commands: Commands,
     images: Res<ImageAssets>,
     sheets: Res<Assets<KenneySpriteSheetAsset>>,
+    lives: Res<Lives>,
     player_ship_type: Res<PlayerCharacterType>,
 ) {
-    // if !lives.is_changed() || lives.0 == 0 || lives.0 == 3 {
-    //     return;
-    // }
+    if !lives.is_changed() || lives.0 == 0 || lives.0 == 3 {
+        return;
+    }
     let Some(space_sheet) = sheets.get(&images.male_person_sheet)
     else {
         warn!("player_ship_destroyed_event_handler requires meteor sprites to be loaded");
@@ -203,4 +205,5 @@ fn spawn_player_after_player_destroyed(
             collider: player_ship_type.collider(),
             wrapping_movement: WrappingMovement,
         });
+        info!("Loaded player!");
 }

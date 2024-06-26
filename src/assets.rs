@@ -41,4 +41,7 @@ pub struct ImageAssets {
     pub pattern_blueprint: Handle<Image>,
     #[asset(path = "Male person/Tilesheet/character_malePerson_sheetHD.xml")]
     pub male_person_sheet: Handle<KenneySpriteSheetAsset>,
+    #[asset(path = "Space/space_sheet.xml")]
+    pub space_sheet: Handle<KenneySpriteSheetAsset>,
+    
 }

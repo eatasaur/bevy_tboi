@@ -126,7 +126,7 @@ impl<T: Into<String> + Send + 'static> Command
                 .expect("sprite sheet assets collection to exist");
 
             spritesheets
-                .get(&images.male_person_sheet)
+                .get(&images.space_sheet)
                 .expect("expect space sheet to have loaded")
         };
 
